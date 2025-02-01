@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-11 WORLD</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&display=swap');
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #1e1e1e;
+            padding: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        #nftContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .nft-card {
+            background: linear-gradient(145deg, #ffcb05, #e6be20);
+            border: 5px solid #ffcb05;
+            padding: 20px;
+            border-radius: 15px;
+            transition: transform 0.4s, box-shadow 0.4s;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            position: relative;
+            box-shadow: 0px 5px 15px rgba(255, 203, 5, 0.5);
+            overflow: hidden;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .nft-card:hover {
+            transform: scale(1.1) rotate(3deg);
+            box-shadow: 0px 10px 30px rgba(255, 203, 5, 0.9);
+        }
+
+        .nft-card img {
+            width: 100%;
+            border-radius: 10px;
+            border: 2px solid #333;
+        }
+
+        .hp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .attack {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        footer {
+            background: #1e1e1e;
+            padding: 10px;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+    <section class="about-section">
+        <h2>About X-11 World</h2>
+        <p>X-11 World is a next-generation NFT and metaverse ecosystem, designed to bridge digital collectibles with interactive experiences. Featuring NFTs exclusively created by DogeKingMike, X-11 World expands across multiple blockchain networks, including Polygon and Uncut Network. Our NFTs are available in leading marketplaces such as Atomic Hub, Play Dapps, OpenSea, OKX, and Magic Eden.</p>
+        <p>With a presence in over 40 metaverses, X-11 World provides an immersive, gamified, and rewarding experience for collectors, traders, and players alike.</p>
+    </section>
+    
+    <section class="quarter-section">
+        <h3>Q1: Expansion & Foundation</h3>
+        <p>Launch of core NFT collections and integration with major NFT marketplaces. Establishment of smart contracts and blockchain utilities for seamless transactions.</p>
+    </section>
+    
+    <section class="quarter-section">
+        <h3>Q2: Metaverse Integrations</h3>
+        <p>Enhancement of X-11 World’s presence in virtual worlds. Partnering with key metaverse platforms to allow interactive utilities for NFT holders.</p>
+    </section>
+    
+    <section class="quarter-section">
+        <h3>Q3: Play-to-Earn Features</h3>
+        <p>Introduction of play-to-earn mechanics, where NFT holders can participate in battles, challenges, and staking rewards across the X-11 ecosystem.</p>
+    </section>
+    
+    <section class="quarter-section">
+        <h3>Q4: Global Adoption & Innovation</h3>
+        <p>Expansion into new blockchain networks, enhanced AI-driven NFT utilities, and strategic collaborations to push the boundaries of the metaverse economy.</p>
+    </section>
+    <header>X-11 WORLD</header>
+    <div id="nftContainer">Loading NFTs...</div>
+    <footer>&copy; 2025 X-11. All Rights Reserved.</footer>
+    <script>
+        const CONTRACT_ADDRESSES = [
+            "0x45879A7eE8fd364a510ede80418254cC039A2F67",
+        ];
+    
+        const ENCRYPTED_API_KEY = "NDI1NWE3MDM4ZmU5NDZmN2E1OTM0NTBlZmQ0YTYxYTk=";
+        const API_KEY = atob(ENCRYPTED_API_KEY);
+        const nftContainer = document.getElementById("nftContainer");
+    
+        async function fetchNFTs() {
+            nftContainer.innerHTML = "<p>Loading NFTs...</p>";
+    
+            try {
+                let allNFTs = [];
+    
+                // Fetch NFTs from each contract address
+                for (const contract of CONTRACT_ADDRESSES) {
+                    const OPENSEA_API_URL = `https://api.opensea.io/api/v2/chain/matic/contract/${contract}/nfts`;
+    
+                    const response = await fetch(OPENSEA_API_URL, {
+                        headers: API_KEY ? { "X-API-KEY": API_KEY } : {}
+                    });
+    
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch NFTs from contract: ${contract}`);
+                        continue; // Skip to the next contract if this one fails
+                    }
+    
+                    const data = await response.json();
+                    if (data.nfts && data.nfts.length > 0) {
+                        allNFTs = allNFTs.concat(data.nfts);
+                    }
+                }
+    
+                // If no NFTs were found
+                if (allNFTs.length === 0) {
+                    nftContainer.innerHTML = "<p>No NFTs found.</p>";
+                    return;
+                }
+    
+                // Clear the container and display NFTs
+                nftContainer.innerHTML = "";
+    
+                allNFTs.forEach(nft => {
+                    const imageUrl = nft.image_url || "https://via.placeholder.com/200";
+                    const name = nft.name || "Unnamed NFT";
+                    const link = nft.permalink || "#";
+                    const supply = nft.supply || "1";
+                    const attack1 = ["Fire Blast - 100", "Shadow Strike - 120", "Thunder Shock - 80"][Math.floor(Math.random() * 3)];
+                    const attack2 = ["Venom Claw - 90", "Ice Storm - 110", "Psybeam - 105"][Math.floor(Math.random() * 3)];
+                    const hp = Math.floor(Math.random() * 200) + 100;
+                    const cardColor = ["#ff5733", "#33ff57", "#3357ff"][Math.floor(Math.random() * 3)];
+    
+                    const card = document.createElement("div");
+                    card.className = "nft-card";
+                    card.style.borderColor = cardColor;
+                    card.style.boxShadow = `0px 5px 15px ${cardColor}`;
+                    card.innerHTML = `
+                        <div class="hp">HP ${hp}</div>
+                        <img src="${imageUrl}" alt="NFT Image">
+                        <h3>${name}</h3>
+                        <p>Supply: ${nft.supply}</p>
+                        <p class="attack">${attack1}</p>
+                        <p class="attack">${attack2}</p>
+                        <a href="${link}" target="_blank" style="color: ${cardColor};">View on OpenSea</a>
+                    `;
+    
+                    nftContainer.appendChild(card);
+                });
+    
+            } catch (error) {
+                console.error("Error fetching NFTs:", error);
+                nftContainer.innerHTML = "Failed to load NFTs.";
+            }
+        }
+    
+        window.onload = fetchNFTs;
+    </script>
+    
+</body>
+</html>
